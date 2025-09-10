@@ -4,7 +4,7 @@ val SampleDaycares = listOf(
     Daycare(
         id = "1",
         name = "Happy Kids Daycare",
-        rating = 4.6,
+        rating = 4.8,
         distanceKm = 0.5,
         imageUrl = "https://fastly.picsum.photos/id/866/1000/500.jpg?hmac=FieISpYk6u8C4cQR-K4DNWuJcMUcidu0X0OntQA2mR4",
         facilities = listOf("Pickup", "Meals", "Indoor Play"),
@@ -13,7 +13,28 @@ val SampleDaycares = listOf(
         address = "123 Kids Street, Suburb",
         pricePerDay = "₹500-800/day",
         latitude = 12.9716,
-        longitude = 77.5946
+        longitude = 77.5946,
+        about = "A delicious home, we met set stations supplies talented bulletin amazing persons ubicitor idos station changes involved team.",
+        ageRange = "6 months - 5 years",
+        reviewCount = 560,
+        reviews = listOf(
+            Review(
+                id = "1",
+                userName = "Priya Sharma",
+                userAvatar = "https://i.pravatar.cc/150?img=1",
+                rating = 5.0,
+                comment = "Great service for large family, amazing staff and the environment is also good",
+                date = "2 days ago"
+            ),
+            Review(
+                id = "2",
+                userName = "Rajesh Kumar",
+                userAvatar = "https://i.pravatar.cc/150?img=2",
+                rating = 4.5,
+                comment = "Very clean and safe environment. My child loves going there.",
+                date = "1 week ago"
+            )
+        )
     ),
     Daycare(
         id = "2",
@@ -27,7 +48,20 @@ val SampleDaycares = listOf(
         address = "456 Bright Avenue, Downtown",
         pricePerDay = "₹600-900/day",
         latitude = 12.9755,
-        longitude = 77.6050
+        longitude = 77.6050,
+        about = "A wonderful place where children learn through creative activities and outdoor play. Our experienced staff ensures a nurturing environment.",
+        ageRange = "1 year - 6 years",
+        reviewCount = 320,
+        reviews = listOf(
+            Review(
+                id = "3",
+                userName = "Anita Singh",
+                userAvatar = "https://i.pravatar.cc/150?img=3",
+                rating = 4.8,
+                comment = "Excellent facilities and caring staff. Highly recommended!",
+                date = "3 days ago"
+            )
+        )
     ),
     Daycare(
         id = "3",
@@ -41,6 +75,19 @@ val SampleDaycares = listOf(
         address = "789 Garden Lane, Eastside",
         pricePerDay = "₹350-550/day",
         latitude = 12.9800,
-        longitude = 77.5900
+        longitude = 77.5900,
+        about = "We focus on learning through play with music and creative activities. Our small group sizes ensure individual attention.",
+        ageRange = "8 months - 4 years",
+        reviewCount = 180,
+        reviews = listOf(
+            Review(
+                id = "4",
+                userName = "Suresh Patel",
+                userAvatar = "https://i.pravatar.cc/150?img=4",
+                rating = 4.2,
+                comment = "Good value for money. My daughter enjoys the music classes.",
+                date = "1 week ago"
+            )
+        )
     )
 ) 

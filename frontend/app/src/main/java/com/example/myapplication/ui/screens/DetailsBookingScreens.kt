@@ -23,26 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
-import com.example.myapplication.data.SampleDaycares
-
-@Composable
-fun DaycareDetailsScreen(daycareId: String, onBack: () -> Unit, onBook: (String) -> Unit) {
-    val daycare = SampleDaycares.firstOrNull { it.id == daycareId } ?: return
-    Scaffold { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
-            Text(daycare.name, style = MaterialTheme.typography.headlineSmall)
-            Text(text = daycare.openHours)
-            Spacer(Modifier.height(12.dp))
-            Text("Facilities", style = MaterialTheme.typography.titleMedium)
-            Text(daycare.facilities.joinToString(" • "))
-            Spacer(Modifier.height(12.dp))
-            Text("Reviews", style = MaterialTheme.typography.titleMedium)
-            Text("\"Lovely staff and safe environment.\"")
-            Spacer(Modifier.height(24.dp))
-            Button(onClick = { onBook(daycare.id) }) { Text("Book Now") }
-        }
-    }
-}
 
 @Composable
 fun BookingScreen(daycareId: String, onProceedPayment: () -> Unit, onBack: () -> Unit) {
@@ -64,11 +44,11 @@ fun BookingScreen(daycareId: String, onProceedPayment: () -> Unit, onBack: () ->
                 Checkbox(checked = pickDrop, onCheckedChange = { pickDrop = it })
                 Text("Pick & Drop")
             }
-            Spacer(Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Divider()
-            Spacer(Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text("₹ 3000")
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = onProceedPayment, modifier = Modifier.fillMaxWidth()) { Text("Proceed Payment") }
         }
     }
@@ -79,9 +59,9 @@ fun PaymentScreen(daycareId: String, onPaid: () -> Unit, onBack: () -> Unit) {
     Scaffold { paddingValues ->
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
             Text("Payment", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text("Credit Card • Google Pay • Apple Pay")
-            Spacer(Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = onPaid, modifier = Modifier.fillMaxWidth()) { Text("Pay ₹ 3000") }
         }
     }
@@ -92,9 +72,9 @@ fun BookingConfirmationScreen(onDone: () -> Unit) {
     Scaffold { paddingValues ->
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
             Text("Booking Confirmed", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Text("Your child will be picked up at 9:45 am")
-            Spacer(Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text("Done") }
         }
     }

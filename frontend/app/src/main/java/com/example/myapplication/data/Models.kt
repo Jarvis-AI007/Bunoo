@@ -12,7 +12,20 @@ data class Daycare(
     val address: String,
     val pricePerDay: String,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val about: String = "",
+    val ageRange: String = "",
+    val reviewCount: Int = 0,
+    val reviews: List<Review> = emptyList()
+)
+
+data class Review(
+    val id: String,
+    val userName: String,
+    val userAvatar: String,
+    val rating: Double,
+    val comment: String,
+    val date: String
 )
 
 data class BookingDetails(
