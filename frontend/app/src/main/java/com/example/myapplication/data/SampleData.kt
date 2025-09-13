@@ -1,5 +1,25 @@
 package com.example.myapplication.data
 
+data class User(
+    val id: String,
+    val name: String,
+    val email: String,
+    val phone: String,
+    val address: String,
+    val memberSince: String,
+    val bookingsCompleted: Int,
+    val avatarUrl: String = ""
+)
+
+data class Child(
+    val id: String,
+    val name: String,
+    val age: String,
+    val allergies: String = "",
+    val notes: String = "",
+    val avatarUrl: String = ""
+)
+
 val SampleDaycares = listOf(
     Daycare(
         id = "1",
@@ -89,5 +109,35 @@ val SampleDaycares = listOf(
                 date = "1 week ago"
             )
         )
+    )
+)
+
+val SampleUser = User(
+    id = "user1",
+    name = "Sarah Johnson",
+    email = "sarah.johnson@email.com",
+    phone = "+91 98765 43210",
+    address = "Sector 12, Noida, UP",
+    memberSince = "January 2024",
+    bookingsCompleted = 15,
+    avatarUrl = "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150"
+)
+
+val SampleChildren = listOf(
+    Child(
+        id = "child1",
+        name = "Emma",
+        age = "3 years",
+        allergies = "Nuts",
+        notes = "Loves drawing and playing with blocks",
+        avatarUrl = "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=150"
+    ),
+    Child(
+        id = "child2",
+        name = "Liam",
+        age = "5 years",
+        allergies = "",
+        notes = "Very active, enjoys outdoor activities",
+        avatarUrl = "https://images.unsplash.com/photo-1519340241574-2cec6aef0c01?w=150"
     )
 ) 

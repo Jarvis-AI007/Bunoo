@@ -35,7 +35,7 @@ import com.example.myapplication.ui.screens.ProfileScreen
 import com.example.myapplication.ui.screens.SupportScreen
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.ui.theme.BunooOrange
-import androidx.compose.foundation.layout.padding // For the padding modifier itself
+import androidx.compose.foundation.layout.padding
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,9 +109,26 @@ fun DaycareApp() {
             }
             composable("bookings") { BookingsScreen() }
             composable("profile") {
-                ProfileScreen(onBack = { navController.popBackStack() }, onEditChild = {
-                    navController.navigate("childProfile")
-                })
+                ProfileScreen(
+                    onBack = { navController.popBackStack() },
+                    onEditProfile = { 
+                        // Navigate to profile edit screen (can be implemented later)
+                        // navController.navigate("editProfile")
+                    },
+                    onAddChild = {
+                        navController.navigate("childProfile")
+                    },
+                    onEditChild = { childId ->
+                        navController.navigate("childProfile/$childId")
+                    },
+                    onSignOut = {
+                        // Handle sign out logic
+                        // For now, just navigate to home
+                        navController.navigate("home") {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        }
+                    }
+                )
             }
             composable("support") { SupportScreen(onBack = { navController.popBackStack() }) }
             composable(
@@ -152,7 +169,29 @@ fun DaycareApp() {
                     navController.popBackStack(route = "home", inclusive = false)
                 })
             }
-            composable("childProfile") { ChildProfileScreen(onBack = { navController.popBackStack() }) }
+            composable("childProfile") { 
+                ChildProfileScreen(
+                    onBack = { navController.popBackStack() },
+                    onSave = { child ->
+                        // Handle saving child profile
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable(
+                route = "childProfile/{childId}",
+                arguments = listOf(navArgument("childId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val childId = backStackEntry.arguments?.getString("childId")
+                ChildProfileScreen(
+                    childId = childId,
+                    onBack = { navController.popBackStack() },
+                    onSave = { child ->
+                        // Handle saving child profile
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 }
