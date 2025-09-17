@@ -17,16 +17,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CalendarToday
-//import androidx.compose.material.icons.filled.Car
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -53,16 +50,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.data.Child
 import com.example.myapplication.data.SampleChildren
 import com.example.myapplication.data.SampleDaycares
 import com.example.myapplication.ui.theme.BunooOrange
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 data class Session(
     val id: String,
@@ -93,9 +95,6 @@ fun BookingScreen(
     var selectedChildren by remember { mutableStateOf<List<Child>>(emptyList()) }
     var selectedDate by remember { mutableStateOf("") }
     var selectedSession by remember { mutableStateOf<Session?>(null) }
-    var showChildDropdown by remember { mutableStateOf(false) }
-    var showDatePicker by remember { mutableStateOf(false) }
-    var showSessionPicker by remember { mutableStateOf(false) }
     
     // Service options
     var pickupService by remember { mutableStateOf(false) }
@@ -105,7 +104,7 @@ fun BookingScreen(
     
     val sessions = listOf(
         Session("1", "EARLY DROP-OFF", "7:45 AM - 8:30 AM", 200),
-        Session("2", "FULLDAY", "8:30 AM - 5:00 PM", 800, false),
+        Session("2", "FULLDAY", "8:30 AM - 5:00 PM", 800),
         Session("3", "MORNING", "8:30 AM - 1:00 PM", 500),
         Session("4", "AFTERNOON", "1:00 PM - 5:00 PM", 400),
         Session("5", "LATE PICK-UP", "5:00 PM - 6:00 PM", 150)
@@ -160,12 +159,8 @@ fun BookingScreen(
                     children = children,
                     selectedChildren = selectedChildren,
                     onChildrenSelected = { selectedChildren = it },
-                    showChildDropdown = showChildDropdown,
-                    onShowChildDropdown = { showChildDropdown = it },
                     selectedDate = selectedDate,
-                    onDateSelected = { selectedDate = it },
-                    showDatePicker = showDatePicker,
-                    onShowDatePicker = { showDatePicker = it }
+                    onDateSelected = { selectedDate = it }
                 )
             }
             
@@ -176,8 +171,8 @@ fun BookingScreen(
                         sessions = sessions,
                         selectedSession = selectedSession,
                         onSessionSelected = { selectedSession = it },
-                        showSessionPicker = showSessionPicker,
-                        onShowSessionPicker = { showSessionPicker = it }
+                        showSessionPicker = false,
+                        onShowSessionPicker = {}
                     )
                 }
             }
@@ -186,10 +181,22 @@ fun BookingScreen(
             item {
                 ServiceOptionsCard(
                     serviceOptions = serviceOptions,
-                    onPickupServiceChanged = { pickupService = it },
-                    onDropServiceChanged = { dropService = it },
-                    onDropByParentsChanged = { dropByParents = it },
-                    onPickupByParentsChanged = { pickupByParents = it }
+                    onPickupServiceChanged = { value ->
+                        pickupService = value
+                        pickupByParents = !value
+                    },
+                    onDropServiceChanged = { value ->
+                        dropService = value
+                        dropByParents = !value
+                    },
+                    onDropByParentsChanged = { value ->
+                        dropByParents = value
+                        dropService = !value
+                    },
+                    onPickupByParentsChanged = { value ->
+                        pickupByParents = value
+                        pickupService = !value
+                    }
                 )
             }
             
@@ -281,18 +288,19 @@ private fun DaycareInfoCard(daycare: com.example.myapplication.data.Daycare) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChildAndDateCard(
     children: List<Child>,
     selectedChildren: List<Child>,
     onChildrenSelected: (List<Child>) -> Unit,
-    showChildDropdown: Boolean,
-    onShowChildDropdown: (Boolean) -> Unit,
     selectedDate: String,
-    onDateSelected: (String) -> Unit,
-    showDatePicker: Boolean,
-    onShowDatePicker: (Boolean) -> Unit
+    onDateSelected: (String) -> Unit
 ) {
+    var childMenuExpanded by remember { mutableStateOf(false) }
+    var anchorPx by remember { mutableStateOf(0) }
+    val density = LocalDensity.current
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -314,50 +322,65 @@ private fun ChildAndDateCard(
             
             Spacer(modifier = Modifier.height(12.dp))
             
+            // Friendlier pill-style selector
             Box {
-                OutlinedTextField(
-                    value = if (selectedChildren.isEmpty()) "Select children" else "${selectedChildren.size} child(ren) selected",
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown")
-                    },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onShowChildDropdown(true) },
-                    shape = RoundedCornerShape(8.dp)
-                )
-                
+                        .background(
+                            color = Color(0xFFF6F6F6),
+                            shape = RoundedCornerShape(28.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = Color(0xFFE5E5E5),
+                            shape = RoundedCornerShape(28.dp)
+                        )
+                        .onGloballyPositioned { anchorPx = it.size.width }
+                        .clickable { childMenuExpanded = true }
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Person, contentDescription = null, tint = BunooOrange)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = if (selectedChildren.isEmpty()) "KIDS" else "KIDS • ${selectedChildren.size} selected",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                }
+
+                val menuWidth: Dp = with(density) { anchorPx.toDp() }
                 DropdownMenu(
-                    expanded = showChildDropdown,
-                    onDismissRequest = { onShowChildDropdown(false) }
+                    expanded = childMenuExpanded,
+                    onDismissRequest = { childMenuExpanded = false },
+                    modifier = Modifier.width(menuWidth)
                 ) {
                     children.forEach { child ->
                         DropdownMenuItem(
-                            text = { 
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
                                     Checkbox(
                                         checked = selectedChildren.contains(child),
                                         onCheckedChange = { isChecked ->
-                                            if (isChecked) {
-                                                onChildrenSelected(selectedChildren + child)
-                                            } else {
-                                                onChildrenSelected(selectedChildren - child)
-                                            }
+                                            if (isChecked) onChildrenSelected(selectedChildren + child)
+                                            else onChildrenSelected(selectedChildren - child)
                                         }
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text(child.name)
+                                    Column {
+                                        Text(child.name, style = MaterialTheme.typography.bodyMedium)
+                                        Text("Age: ${child.age}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                                    }
                                 }
                             },
                             onClick = {
-                                if (selectedChildren.contains(child)) {
-                                    onChildrenSelected(selectedChildren - child)
-                                } else {
-                                    onChildrenSelected(selectedChildren + child)
-                                }
+                                if (selectedChildren.contains(child)) onChildrenSelected(selectedChildren - child)
+                                else onChildrenSelected(selectedChildren + child)
                             }
                         )
                     }
@@ -376,46 +399,110 @@ private fun ChildAndDateCard(
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            OutlinedTextField(
-                value = selectedDate.ifEmpty { "Select date" },
-                onValueChange = {},
-                readOnly = true,
-                leadingIcon = {
-                    Icon(Icons.Default.CalendarToday, contentDescription = "Calendar")
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onShowDatePicker(true) },
-                shape = RoundedCornerShape(8.dp)
+            MonthCalendar(
+                selectedDateLabel = selectedDate,
+                onDateSelected = onDateSelected
             )
-            
-            // Simple date picker (in a real app, you'd use a proper date picker)
-            if (showDatePicker) {
-                Spacer(modifier = Modifier.height(12.dp))
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val dates = listOf("Mon, Sep 15", "Tue, Sep 16", "Wed, Sep 17", "Thu, Sep 18", "Fri, Sep 19")
-                    items(dates) { date ->
-                        Button(
-                            onClick = {
-                                onDateSelected(date)
-                                onShowDatePicker(false)
+        }
+    }
+}
+
+@Composable
+private fun MonthCalendar(
+    selectedDateLabel: String,
+    onDateSelected: (String) -> Unit
+) {
+    val todayCal = remember { Calendar.getInstance() }
+    val displayCal = remember { Calendar.getInstance().apply { set(Calendar.DAY_OF_MONTH, 1) } }
+    var monthOffset by remember { mutableStateOf(0) }
+
+    val monthFormat = remember { SimpleDateFormat("MMMM yyyy", Locale.getDefault()) }
+    val labelFormat = remember { SimpleDateFormat("EEE, MMM d", Locale.getDefault()) }
+
+    fun buildMonthDays(offset: Int): List<Date?> {
+        val cal = displayCal.clone() as Calendar
+        cal.add(Calendar.MONTH, offset)
+        cal.set(Calendar.DAY_OF_MONTH, 1)
+        val firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK) // 1..7
+        val daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        val result = mutableListOf<Date?>()
+        // leading blanks
+        for (i in 1 until firstDayOfWeek) result.add(null)
+        for (d in 1..daysInMonth) {
+            cal.set(Calendar.DAY_OF_MONTH, d)
+            result.add(cal.time)
+        }
+        // pad to complete weeks (up to 6 rows)
+        while (result.size % 7 != 0) result.add(null)
+        // ensure at least 35 cells
+        while (result.size < 42) result.add(null)
+        return result
+    }
+
+    val cells = buildMonthDays(monthOffset)
+    val headerCal = (displayCal.clone() as Calendar).apply { add(Calendar.MONTH, monthOffset) }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = { monthOffset -= 1 }) { Icon(Icons.Default.ArrowBack, contentDescription = "Prev") }
+        Text(monthFormat.format(headerCal.time), style = MaterialTheme.typography.titleMedium)
+        IconButton(onClick = { monthOffset += 1 }) { Icon(Icons.Default.ArrowForward, contentDescription = "Next") }
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    val weekDays = listOf("Su","Mo","Tu","We","Th","Fr","Sa")
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        weekDays.forEach { d ->
+            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                Text(d, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+
+    Spacer(modifier = Modifier.height(6.dp))
+
+    // grid 6 rows
+    cells.chunked(7).forEach { week ->
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            week.forEach { dateOrNull ->
+                val enabled = dateOrNull != null && !dateOrNull.before(todayCal.time)
+                val selected = enabled && selectedDateLabel.isNotEmpty() && labelFormat.format(dateOrNull!!) == selectedDateLabel
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(
+                            color = when {
+                                selected -> BunooOrange
+                                else -> Color(0xFFF6F6F6)
                             },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (selectedDate == date) BunooOrange else Color.Gray.copy(alpha = 0.1f)
-                            ),
                             shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                text = date,
-                                color = if (selectedDate == date) Color.White else Color.Black
-                            )
-                        }
-                    }
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = if (selected) BunooOrange else Color(0xFFE5E5E5),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .let { base -> if (enabled) base.clickable { onDateSelected(labelFormat.format(dateOrNull!!)) } else base }
+                        .padding(vertical = 10.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (dateOrNull == null) "" else SimpleDateFormat("d", Locale.getDefault()).format(dateOrNull),
+                        color = when {
+                            !enabled -> Color(0xFFBDBDBD)
+                            selected -> Color.White
+                            else -> MaterialTheme.colorScheme.onSurface
+                        },
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }
+        Spacer(modifier = Modifier.height(6.dp))
     }
 }
 
