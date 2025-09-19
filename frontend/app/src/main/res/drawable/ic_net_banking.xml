@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+
+    <!-- Outer rectangle (screen background) -->
+    <path
+        android:pathData="M4,8C4,6.9 4.9,6 6,6H26C27.1,6 28,6.9 28,8V24C28,25.1 27.1,26 26,26H6C4.9,26 4,25.1 4,24V8Z"
+        android:fillColor="#1976D2" />
+
+    <!-- Bank building roof -->
+    <path
+        android:pathData="M10,13L16,10L22,13H10Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Bank building base -->
+    <path
+        android:pathData="M11,14H21V15H11V14Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Pillars (3 only) -->
+    <path
+        android:pathData="M12.5,15H13.5V20H12.5V15Z"
+        android:fillColor="#FFFFFF" />
+
+    <path
+        android:pathData="M15.5,15H16.5V20H15.5V15Z"
+        android:fillColor="#FFFFFF" />
+
+    <path
+        android:pathData="M18.5,15H19.5V20H18.5V15Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Base line -->
+    <path
+        android:pathData="M11,20H21V21H11V20Z"
+        android:fillColor="#FFFFFF" />
+</vector>

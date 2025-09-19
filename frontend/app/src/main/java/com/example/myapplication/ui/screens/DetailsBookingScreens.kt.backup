@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -68,8 +67,6 @@ import java.util.Date
 import java.util.Locale
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.res.painterResource
-import com.example.myapplication.R
 
 data class Session(
     val id: String,
@@ -476,9 +473,7 @@ private fun MonthCalendar(
     val weekDays = listOf("Su","Mo","Tu","We","Th","Fr","Sa")
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         weekDays.forEach { d ->
-            Box(modifier = Modifier
-                                            .weight(1f)
-                                            .height(56.dp), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 Text(d, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), style = MaterialTheme.typography.bodySmall)
             }
         }
@@ -924,7 +919,7 @@ fun PaymentScreen(daycareId: String, daycareFee: Int, serviceFee: Int, totalFee:
                             title = "Credit/Debit Card",
                             isSelected = selectedMethod == PaymentMethod.CARD,
                             leading = {
-                                PaymentMethodLogo(PaymentMethod.CARD)
+                                LogoBadge(text = "��", bg = BunooOrange)
                             },
                             onClick = { selectedMethod = PaymentMethod.CARD }
                         )
@@ -950,27 +945,19 @@ fun PaymentScreen(daycareId: String, daycareFee: Int, serviceFee: Int, totalFee:
                                     singleLine = true
                                 )
                                 Spacer(Modifier.height(8.dp))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     OutlinedTextField(
                                         value = cardExpiry,
                                         onValueChange = { cardExpiry = it },
                                         placeholder = { Text("Expiration Date (MM/YY)") },
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(56.dp),
+                                        modifier = Modifier.weight(1f),
                                         singleLine = true
                                     )
                                     OutlinedTextField(
                                         value = cardCvv,
                                         onValueChange = { cardCvv = it },
                                         placeholder = { Text("CVV") },
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(56.dp),
+                                        modifier = Modifier.weight(1f),
                                         singleLine = true
                                     )
                                 }
@@ -998,7 +985,7 @@ fun PaymentScreen(daycareId: String, daycareFee: Int, serviceFee: Int, totalFee:
                             title = "UPI",
                             isSelected = selectedMethod == PaymentMethod.UPI,
                             leading = {
-                                PaymentMethodLogo(PaymentMethod.UPI)
+                                LogoBadge(text = "G", bg = Color(0xFF2675EC))
                             },
                             onClick = { selectedMethod = PaymentMethod.UPI }
                         )
@@ -1032,7 +1019,7 @@ fun PaymentScreen(daycareId: String, daycareFee: Int, serviceFee: Int, totalFee:
                             title = "Net Banking",
                             isSelected = selectedMethod == PaymentMethod.NET_BANKING,
                             leading = {
-                                PaymentMethodLogo(PaymentMethod.NET_BANKING)
+                                LogoBadge(text = "NB", bg = Color(0xFF0BA35E))
                             },
                             onClick = { selectedMethod = PaymentMethod.NET_BANKING }
                         )
@@ -1051,10 +1038,10 @@ fun PaymentScreen(daycareId: String, daycareFee: Int, serviceFee: Int, totalFee:
                         Spacer(modifier = Modifier.height(12.dp))
 
                         PaymentMethodRow(
-                            title = "Pay Later",
+                            title = "Cash on Delivery",
                             isSelected = selectedMethod == PaymentMethod.CASH,
                             leading = {
-                                PaymentMethodLogo(PaymentMethod.CASH)
+                                LogoBadge(text = "₹", bg = Color(0xFFFFA000))
                             },
                             onClick = { selectedMethod = PaymentMethod.CASH }
                         )
@@ -1150,44 +1137,6 @@ private fun LogoBadge(text: String, bg: Color) {
         contentAlignment = Alignment.Center
     ) {
         Text(text, color = bg, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-private fun PaymentMethodLogo(method: PaymentMethod) {
-    when (method) {
-        PaymentMethod.CARD -> {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_credit_card),
-                contentDescription = "Credit/Debit Card",
-                modifier = Modifier.size(32.dp),
-                tint = Color.Unspecified
-            )
-        }
-        PaymentMethod.UPI -> {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_upi),
-                contentDescription = "UPI",
-                modifier = Modifier.size(32.dp),
-                tint = Color.Unspecified
-            )
-        }
-        PaymentMethod.NET_BANKING -> {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_net_banking),
-                contentDescription = "Net Banking",
-                modifier = Modifier.size(32.dp),
-                tint = Color.Unspecified
-            )
-        }
-        PaymentMethod.CASH -> {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_cash),
-                contentDescription = "Cash",
-                modifier = Modifier.size(32.dp),
-                tint = Color.Unspecified
-            )
-        }
     }
 }
 

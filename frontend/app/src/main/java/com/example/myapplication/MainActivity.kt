@@ -149,17 +149,30 @@ fun DaycareApp() {
                 val daycareId = backStackEntry.arguments?.getString("id").orEmpty()
                 BookingScreen(
                     daycareId = daycareId,
-                    onProceedPayment = { navController.navigate("payment/$daycareId") },
+                    onProceedPayment = { daycareFee, serviceFee, totalFee ->
+                        navController.navigate("payment/$daycareId/$daycareFee/$serviceFee/$totalFee")
+                    },
                     onBack = { navController.popBackStack() }
                 )
             }
             composable(
-                route = "payment/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.StringType })
+                route = "payment/{id}/{daycareFee}/{serviceFee}/{totalFee}",
+                arguments = listOf(
+                    navArgument("id") { type = NavType.StringType },
+                    navArgument("daycareFee") { type = NavType.IntType },
+                    navArgument("serviceFee") { type = NavType.IntType },
+                    navArgument("totalFee") { type = NavType.IntType }
+                )
             ) { backStackEntry ->
                 val daycareId = backStackEntry.arguments?.getString("id").orEmpty()
+                val daycareFee = backStackEntry.arguments?.getInt("daycareFee") ?: 0
+                val serviceFee = backStackEntry.arguments?.getInt("serviceFee") ?: 0
+                val totalFee = backStackEntry.arguments?.getInt("totalFee") ?: 0
                 PaymentScreen(
                     daycareId = daycareId,
+                    daycareFee = daycareFee,
+                    serviceFee = serviceFee,
+                    totalFee = totalFee,
                     onPaid = { navController.navigate("confirmation") },
                     onBack = { navController.popBackStack() }
                 )
