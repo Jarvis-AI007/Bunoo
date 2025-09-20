@@ -18,15 +18,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
@@ -58,14 +58,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.example.myapplication.R
 import com.example.myapplication.data.Child
 import com.example.myapplication.data.SampleChildren
 import com.example.myapplication.data.SampleUser
@@ -760,147 +758,15 @@ fun ChildProfileScreen(
             }
         }
     }
-
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SupportScreen(onBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Support") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Black,
-                    navigationIconContentColor = Color.Black
-                )
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(40.dp))
-            
-            // Support Icon
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .background(
-                        BunooOrange.copy(alpha = 0.1f),
-                        CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_support),
-                    contentDescription = "Support",
-                    modifier = Modifier.size(80.dp),
-                    tint = BunooOrange
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            // Welcome Message
-            Text(
-                text = "Hello, How can we Help you?",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                textAlign = TextAlign.Center
-            )
-            
-            Spacer(modifier = Modifier.height(48.dp))
-
-            // Support Options
-            SupportOptionCard(
-                icon = R.drawable.ic_live_chat,
-                title = "Contact Live Chat",
-                onClick = { /* Handle live chat */ },
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            SupportOptionCard(
-                icon = R.drawable.ic_email,
-                title = "Sent us an E-mail",
-                onClick = { /* Handle email */ },
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SupportOptionCard(
-                icon = R.drawable.ic_faq,
-                title = "FAQs",
-                onClick = { /* Handle FAQ */ },
-                showDropdown = true,
-            )
-            
-            Spacer(modifier = Modifier.height(40.dp))
+    Scaffold { paddingValues ->
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
+            Text("Support")
+            Spacer(Modifier.height(12.dp))
+            Text("FAQ • Chat • Call")
         }
     }
-}
-
-@Composable
-private fun SupportOptionCard(
-    icon: Int,
-    title: String,
-    onClick: () -> Unit,
-    showDropdown: Boolean = false,
-//    iconTint: Color
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(id = icon),
-                    contentDescription = title,
-                    modifier = Modifier.size(24.dp),
-                    tint = BunooOrange
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black
-                )
-            }
-            
-            Icon(
-                imageVector = if (showDropdown) Icons.Default.KeyboardArrowDown else Icons.Default.ArrowForward,
-                contentDescription = if (showDropdown) "Expand" else "Go",
-                modifier = Modifier.size(20.dp),
-                tint = Color.Gray
-            )
-        }
-    }
-}
+} 

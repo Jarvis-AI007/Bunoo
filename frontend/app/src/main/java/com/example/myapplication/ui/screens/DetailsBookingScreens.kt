@@ -451,10 +451,8 @@ private fun MonthCalendar(
             cal.set(Calendar.DAY_OF_MONTH, d)
             result.add(cal.time)
         }
-        // pad to complete weeks (up to 6 rows)
-        while (result.size % 7 != 0) result.add(null)
-        // ensure at least 35 cells
-        while (result.size < 42) result.add(null)
+        // Only pad to complete the last week if needed, but don't add extra rows
+        while (result.size % 7 != 0 && result.size < 35) result.add(null)
         return result
     }
 
