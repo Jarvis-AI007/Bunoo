@@ -30,8 +30,10 @@ import com.example.myapplication.ui.screens.BookingsScreen
 import com.example.myapplication.ui.screens.ChildProfileScreen
 import com.example.myapplication.ui.screens.DaycareDetailsScreen
 import com.example.myapplication.ui.screens.HomeScreen
+import com.example.myapplication.ui.screens.LoginScreen
 import com.example.myapplication.ui.screens.PaymentScreen
 import com.example.myapplication.ui.screens.ProfileScreen
+import com.example.myapplication.ui.screens.SignUpScreen
 import com.example.myapplication.ui.screens.SupportScreen
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.ui.theme.BunooOrange
@@ -66,40 +68,72 @@ fun DaycareApp() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
+    // Check if current route is an auth screen (no bottom bar needed)
+    val isAuthScreen = currentRoute == "login" || currentRoute == "signup"
+
     androidx.compose.material3.Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = androidx.compose.ui.graphics.Color.White
-            ) {
-                val destination: NavDestination? = backStackEntry?.destination
-                topDestinations.forEach { item ->
-                    val selected = currentRoute?.startsWith(item.route) == true
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            if (!selected) {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
+            if (!isAuthScreen) {
+                NavigationBar(
+                    containerColor = androidx.compose.ui.graphics.Color.White
+                ) {
+                    val destination: NavDestination? = backStackEntry?.destination
+                    topDestinations.forEach { item ->
+                        val selected = currentRoute?.startsWith(item.route) == true
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = {
+                                if (!selected) {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
                                 }
-                            }
-                        },
-                        icon = { Icon(item.icon, contentDescription = item.label) },
-                        label = { androidx.compose.material3.Text(item.label) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = BunooOrange,
-                            selectedTextColor = BunooOrange,
-                            indicatorColor = BunooOrange.copy(alpha = 0.12f),
-                            unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            },
+                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            label = { androidx.compose.material3.Text(item.label) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = BunooOrange,
+                                selectedTextColor = BunooOrange,
+                                indicatorColor = BunooOrange.copy(alpha = 0.12f),
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
     ) { paddingValues ->
-        NavHost(navController = navController, startDestination = "home", modifier = androidx.compose.ui.Modifier.padding(paddingValues)) {
+        NavHost(navController = navController, startDestination = "login", modifier = androidx.compose.ui.Modifier.padding(paddingValues)) {
+            // Authentication screens
+            composable("login") {
+                LoginScreen(
+                    onLoginSuccess = {
+                        navController.navigate("home") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    onNavigateToSignUp = {
+                        navController.navigate("signup")
+                    }
+                )
+            }
+            composable("signup") {
+                SignUpScreen(
+                    onSignUpSuccess = {
+                        navController.navigate("login") {
+                            popUpTo("signup") { inclusive = true }
+                        }
+                    },
+                    onNavigateToLogin = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            
+            // Main app screens
             composable("home") {
                 HomeScreen(
                     onOpenDetails = { daycareId ->
@@ -123,9 +157,8 @@ fun DaycareApp() {
                     },
                     onSignOut = {
                         // Handle sign out logic
-                        // For now, just navigate to home
-                        navController.navigate("home") {
-                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
                         }
                     }
                 )
