@@ -70,6 +70,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import com.example.myapplication.R
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
 
 data class Session(
     val id: String,
@@ -1316,14 +1322,102 @@ private fun BookingDetailRow(label: String, value: String) {
 }
 
 @Composable
-fun BookingConfirmationScreen(onDone: () -> Unit) {
-    Scaffold { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
-            Text("Booking Confirmed", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(16.dp))
-            Text("Your child will be picked up at 9:45 am")
-            Spacer(Modifier.height(24.dp))
-            Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text("Done") }
+fun BookingConfirmationScreen(onGoToBookings: () -> Unit) {
+    Scaffold(
+        containerColor = Color(0xFFF5F5DC) // Light beige background
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            // Main confirmation card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Success checkmark in green circle
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .background(
+                                Color(0xFF4CAF50), // Green color
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Default.Check,
+                            contentDescription = "Success",
+                            tint = Color.White,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // Booking Confirmed text
+                    Text(
+                        text = "Booking Confirmed",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    // Subtitle
+                    Text(
+                        text = "Your child's spot is reserved.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Black
+                    )
+                    
+                    Spacer(modifier = Modifier.height(32.dp))
+                    
+                    // Illustration placeholder - you can replace this with your local image
+                    AsyncImage(
+                        model = "file:///android_asset/care.jpg",
+                        contentDescription = "Child illustration",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.67f), // 200x120 ratio
+                        contentScale = ContentScale.Fit
+                    )
+                    
+                    Spacer(modifier = Modifier.height(32.dp))
+                    
+                    // Go to Bookings button
+                    Button(
+                        onClick = onGoToBookings,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = BunooOrange
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "Go to Bookings",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
         }
     }
 } 

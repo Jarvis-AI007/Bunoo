@@ -178,8 +178,11 @@ fun DaycareApp() {
                 )
             }
             composable("confirmation") {
-                BookingConfirmationScreen(onDone = {
-                    navController.popBackStack(route = "home", inclusive = false)
+                BookingConfirmationScreen(onGoToBookings = {
+                    navController.navigate("bookings") {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 })
             }
             composable("childProfile") { 
