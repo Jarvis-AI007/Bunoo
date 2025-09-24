@@ -57,6 +57,8 @@ dependencies {
     // Location services
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.accompanist:accompanist-permissions:0.37.3")
+    // Splash screen API for Android 12+
+    implementation("androidx.core:core-splashscreen:1.0.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

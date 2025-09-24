@@ -47,8 +47,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -59,6 +61,8 @@ import com.example.myapplication.R
 import com.example.myapplication.ui.theme.BunooOrange
 import android.widget.Toast
 import kotlinx.coroutines.delay
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
 fun LoginScreen(
@@ -72,6 +76,7 @@ fun LoginScreen(
     var toastMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val focusManager = LocalFocusManager.current
 
     // Show toast at top
     LaunchedEffect(showToast) {
@@ -100,7 +105,8 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -141,7 +147,14 @@ fun LoginScreen(
                 leadingIcon = {
                     Icon(Icons.Default.Email, contentDescription = "Email")
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(62.dp),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
                 shape = RoundedCornerShape(12.dp),
                 colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BunooOrange,
@@ -170,8 +183,14 @@ fun LoginScreen(
                     }
                 },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(62.dp),
+                singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BunooOrange,
@@ -197,7 +216,7 @@ fun LoginScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(62.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = BunooOrange
                 ),
@@ -265,6 +284,7 @@ fun SignUpScreen(
     var toastMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val focusManager = LocalFocusManager.current
 
     // Show toast at top
     LaunchedEffect(showToast) {
@@ -293,26 +313,27 @@ fun SignUpScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             // Logo Section - Optimized size to fit screen
-            Box(
-                modifier = Modifier
-                    .size(200.dp) // Reduced from 280.dp to 200.dp for better fit
-                    .padding(vertical = 8.dp), // Reduced padding
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.bunoo),
-                    contentDescription = "Bunoo Logo",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
+//            Box(
+//                modifier = Modifier
+//                    .size(200.dp) // Reduced from 280.dp to 200.dp for better fit
+//                    .padding(vertical = 8.dp), // Reduced padding
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.bunoo),
+//                    contentDescription = "Bunoo Logo",
+//                    modifier = Modifier.fillMaxSize(),
+//                    contentScale = ContentScale.Fit
+//                )
+//            }
+//
+//            Spacer(modifier = Modifier.height(8.dp))
 
             // Title - Better aligned with logo
             Text(
@@ -334,7 +355,14 @@ fun SignUpScreen(
                 leadingIcon = {
                     Icon(Icons.Default.Person, contentDescription = "Full Name")
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(62.dp),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
                 shape = RoundedCornerShape(12.dp),
                 colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BunooOrange,
@@ -354,8 +382,14 @@ fun SignUpScreen(
                 leadingIcon = {
                     Icon(Icons.Default.Phone, contentDescription = "Phone")
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(62.dp),
+                singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BunooOrange,
@@ -375,8 +409,14 @@ fun SignUpScreen(
                 leadingIcon = {
                     Icon(Icons.Default.Email, contentDescription = "Email")
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(62.dp),
+                singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BunooOrange,
@@ -405,8 +445,14 @@ fun SignUpScreen(
                     }
                 },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(62.dp),
+                singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BunooOrange,
@@ -435,8 +481,14 @@ fun SignUpScreen(
                     }
                 },
                 visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(62.dp),
+                singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BunooOrange,
@@ -490,7 +542,7 @@ fun SignUpScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(62.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = BunooOrange
                 ),

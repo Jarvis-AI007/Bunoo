@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Help
@@ -38,12 +39,23 @@ import com.example.myapplication.ui.screens.SupportScreen
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.ui.theme.BunooOrange
 import androidx.compose.foundation.layout.padding
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 class MainActivity : ComponentActivity() {
+    private var keepOnSplash: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen().setKeepOnScreenCondition { keepOnSplash }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            // Once the first composition happens, dismiss the splash
+            LaunchedEffect(Unit) { keepOnSplash = false }
+
             MyApplicationTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     DaycareApp()
@@ -75,6 +87,9 @@ fun DaycareApp() {
         bottomBar = {
             if (!isAuthScreen) {
                 NavigationBar(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .height(70.dp),
                     containerColor = androidx.compose.ui.graphics.Color.White
                 ) {
                     val destination: NavDestination? = backStackEntry?.destination
@@ -106,7 +121,9 @@ fun DaycareApp() {
             }
         }
     ) { paddingValues ->
-        NavHost(navController = navController, startDestination = "login", modifier = androidx.compose.ui.Modifier.padding(paddingValues)) {
+        NavHost(navController = navController, startDestination = "login", modifier = androidx.compose.ui.Modifier.padding(
+            paddingValues
+        )) {
             // Authentication screens
             composable("login") {
                 LoginScreen(

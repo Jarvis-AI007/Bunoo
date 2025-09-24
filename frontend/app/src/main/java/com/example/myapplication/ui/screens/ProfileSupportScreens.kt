@@ -18,6 +18,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -603,6 +607,9 @@ fun ChildProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .imePadding()
+                .navigationBarsPadding()
                 .padding(16.dp)
         ) {
             // Photo Upload Section
@@ -758,6 +765,8 @@ fun ChildProfileScreen(
                     color = Color.White
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 

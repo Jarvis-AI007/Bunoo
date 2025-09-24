@@ -46,6 +46,11 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 
 // Booking status enum
 enum class BookingStatus {
@@ -170,7 +175,9 @@ fun BookingsScreen() {
             }
             
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(bottom = 16.dp),
+                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 if (selectedTab == "Current") {
                     item {
@@ -392,7 +399,7 @@ private fun BookingCard(booking: Booking) {
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "Track Emily's Ride",
+                                    text = "Track",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Medium,
                                     color = Color.White
@@ -402,12 +409,12 @@ private fun BookingCard(booking: Booking) {
                         
                         Spacer(modifier = Modifier.height(4.dp))
                         
-                        Text(
-                            text = "$${booking.price}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
+//                        Text(
+//                            text = "$${booking.price}",
+//                            style = MaterialTheme.typography.bodyMedium,
+//                            fontWeight = FontWeight.Bold,
+//                            color = Color.Black
+//                        )
                     }
                     BookingStatus.COMPLETED -> {
                         Button(
